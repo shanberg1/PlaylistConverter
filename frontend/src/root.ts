@@ -3,12 +3,12 @@ import {
     Services
 } from "../../server/src/Models/RequestModel"
 
-document.querySelector("#convertPlaylistButton").addEventListener("click", convertPlaylist);
+document.querySelector("#convertSongButton").addEventListener("click", convertSong);
 document.querySelector("#sourceService").addEventListener("change", sourceServiceSelect);
 document.querySelector("#destinationService").addEventListener("change", destinationServiceSelect);
 const sourceSelect = getElement("sourceService");
 const destinationSelect = getElement("destinationService");
-const convertButton = getElement("convertPlaylistButton");
+const convertButton = getElement("convertSongButton");
 main();
 
 const _debugMode = window.location.href.includes("localhost");
@@ -60,6 +60,25 @@ export function convertPlaylist() {
                 id: sourceSelect.value === Services.Apple ? getAppleMusicPlaylistId(playlisturl) : getSpotifyPlaylistId(playlisturl),
                 region: "us" // FIXME
             }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(res => {
+            return res.json();
+        }).then((data) => {
+            const newPlaylist = getElement("newPlaylistUrl");
+            newPlaylist.value = data.url;
+            return data;
+        })
+}
+
+export function convertSong() {
+    const playlisturl = getElement("playlistUrl").value;
+    const destEndpoint = destinationSelect.value === Services.Apple ? "applemusic" : "spotify";
+    return fetch(`${_backendUrl}/service/${destEndpoint}/song?songId=${""}`,
+        {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json"
             }
