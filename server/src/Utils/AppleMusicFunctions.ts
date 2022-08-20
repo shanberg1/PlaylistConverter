@@ -118,8 +118,9 @@ export function createAppleMusicPlaylist(region: string, playlistInfo: PlaylistI
 }
 
 export function searchForSongApple(name: string) {
+    // TODO: need to include artist and album in the future
     const appleAccessToken = _appleMusicSJWT;
-    request
+    return request
         .get("https://api.music.apple.com/v1/catalog/us/search")
         .set("Authorization", "Bearer " + appleAccessToken)
         //.set('Content-Type', 'application/x-www-form-urlencoded')
@@ -131,6 +132,28 @@ export function searchForSongApple(name: string) {
         .then((data) => {
             const topMatch = data.results.songs.data[0];
             return topMatch;
+        })
+        .catch(err => {
+            console.log(err);
+            throw err;
+        });
+}
+
+export function getCatalogSongById(id: string): Promise<TrackIdentifier> {
+    const appleAccessToken = _appleMusicSJWT;
+    return request
+        .get(`https://api.music.apple.com/v1/catalog/us/songs/${id}`)
+        .set("Authorization", "Bearer " + appleAccessToken)
+        .then((value) => {
+            return value.body
+        })
+        .then((body: AppleMusicApi.SongResponse) => {
+            const song = body.data[0];
+            return {
+                name: song.attributes.name,
+                album: song.attributes.albumName,
+                artist: song.attributes.artistName
+            }
         })
         .catch(err => {
             console.log(err);

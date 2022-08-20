@@ -7,10 +7,12 @@ import * as SpotifyApi from "spotify-api"
 import * as AppleMusicApi from "apple-music-api"
 
 import {
+    getSpotifySong,
     postSpotifyPlaylist
 } from "./Controllers/SpotifyController"
 
 import {
+    getAppleMusicSong,
     postApplePlaylist
 } from "./Controllers/AppleMusicController"
 import { createAppleMusicPlaylist } from "./Utils/AppleMusicFunctions";
@@ -143,8 +145,10 @@ app.get('/authentication/spotify', getAuthenticateWithSpotifyCallback);
 app.get('/echo', (req, res) => {
     res.send("hello, passive")
 })
+app.get('service/spotify/song', getSpotifySong);
+app.get('service/applemusic/song', getAppleMusicSong);
 app.post('/service/spotify/playlist', jsonParser, postSpotifyPlaylist);
-app.post('/service/applemusic/playlist', jsonParser, postApplePlaylist)
+app.post('/service/applemusic/playlist', jsonParser, postApplePlaylist);
 
 console.log(app._router.stack)
 
