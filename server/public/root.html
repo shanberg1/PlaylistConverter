@@ -1,0 +1,26 @@
+<body class="background">
+    <script src="https://cdn.jsdelivr.net/npm/superagent"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/8.0.20/jsrsasign-all-min.js"></script>
+    <script src="https://js-cdn.music.apple.com/musickit/v1/musickit.js"></script>
+    <link rel="stylesheet" href="stylesheet.css" type="text/css">
+    <div>
+        <div>
+            <h1 class="heading">Playlist Converter</h1>
+        </div>
+        <div class="controls">
+            <input id="playlistUrl" class="playlistTextBox" type="text" placeholder="Enter a playlist url"></input>
+            <div class="selectControlsContainer">
+                <div class="selectControls">
+                    <label for="sourceService">Source service</label>
+                    <select name="Source Service" class="serviceSelect" id="sourceService"></select>
+                    <label for="destinationService">Destination service</label>
+                    <select name="Destination Service" class="serviceSelect" id="destinationService"></select>
+                </div>
+            </div>
+            <button id=convertPlaylistButton class="convertButton" type="button">Convert playlist!</button>
+            <input id="newPlaylistUrl" class="newPlaylistTextBox" type="text"
+                placeholder="Your new playlist url will be here" readonly></input>
+        </div>
+    </div>
+    <script type="module" src="bundle.js"></script>
+</body>
