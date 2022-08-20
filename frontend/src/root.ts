@@ -57,7 +57,7 @@ export function convertPlaylist() {
             method: "POST",
             body: JSON.stringify({
                 service: sourceSelect.value,
-                id: sourceSelect.value === Services.Apple ? getAppleMusicPlaylistId(playlisturl) : getSpotifyPlaylistId(playlisturl),
+                id: sourceSelect.value === Services.Apple ? getAppleMusicId(playlisturl) : getSpotifyPlaylistId(playlisturl),
                 region: "us" // FIXME
             }),
             headers: {
@@ -74,9 +74,11 @@ export function convertPlaylist() {
 }
 
 export function convertSong() {
-    const playlisturl = getElement("playlistUrl").value;
+    const songUrl = getElement("songUrl").value;
+    const srcEndpoint = sourceSelect.value === Services.Apple ? "applemusic" : "spotify";
     const destEndpoint = destinationSelect.value === Services.Apple ? "applemusic" : "spotify";
-    return fetch(`${_backendUrl}/service/${destEndpoint}/song?songId=${""}`,
+    const songId = srcEndpoint === "applemusic" ? getAppleMusicId(songUrl) : getSpotifyPlaylistId(songUrl);
+    return fetch(`${_backendUrl}/service/${destEndpoint}/song?songId=${songId}`,
         {
             method: "GET",
             headers: {
@@ -86,7 +88,7 @@ export function convertSong() {
         .then(res => {
             return res.json();
         }).then((data) => {
-            const newPlaylist = getElement("newPlaylistUrl");
+            const newPlaylist = getElement("newSongUrl");
             newPlaylist.value = data.url;
             return data;
         })
@@ -102,8 +104,8 @@ function getAppleMusicRegion(url: string): string {
 }
 
 // TODO: actually implement good logic
-function getAppleMusicPlaylistId(url: string): string {
-    return url.split("/")[6];
+function getAppleMusicId(url: string): string {
+    return url.split("/")[6]?.split("?")[0];
 }
 
 // TODO: actually implement good logic

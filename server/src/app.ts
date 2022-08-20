@@ -32,7 +32,6 @@ app.use(express.static('public'));
 
 const _backendUrl = process.env.DEBUG_MODE === "true" ? "http://localhost:3000" : "https://playlist-converter.azurewebsites.net";
 
-
 let _spotifyClientCert: string;
 let _appleMusicSJWT: string;
 let _spotifyAuthorizationCode: string;
@@ -145,8 +144,8 @@ app.get('/authentication/spotify', getAuthenticateWithSpotifyCallback);
 app.get('/echo', (req, res) => {
     res.send("hello, passive")
 })
-app.get('service/spotify/song', getSpotifySong);
-app.get('service/applemusic/song', getAppleMusicSong);
+app.get('/service/spotify/song', getSpotifySong);
+app.get('/service/applemusic/song', getAppleMusicSong);
 app.post('/service/spotify/playlist', jsonParser, postSpotifyPlaylist);
 app.post('/service/applemusic/playlist', jsonParser, postApplePlaylist);
 

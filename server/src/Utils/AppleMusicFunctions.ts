@@ -142,7 +142,7 @@ export function searchForSongApple(name: string) {
 export function getCatalogSongById(id: string): Promise<TrackIdentifier> {
     const appleAccessToken = _appleMusicSJWT;
     return request
-        .get(`https://api.music.apple.com/v1/catalog/us/songs/${id}`)
+        .get(`https://api.music.apple.com/v1/catalog/us/songs?ids=${id}`)
         .set("Authorization", "Bearer " + appleAccessToken)
         .then((value) => {
             return value.body
@@ -156,7 +156,7 @@ export function getCatalogSongById(id: string): Promise<TrackIdentifier> {
             }
         })
         .catch(err => {
-            console.log(err);
+            console.log(err.response.error);
             throw err;
         });
 }

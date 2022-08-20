@@ -2,16 +2,33 @@ import * as request from "superagent";
 import * as SpotifyApi from "spotify-api";
 import {
     addTracksToSpotifyPlaylist,
-    createSpotifyPlaylist, getSpotifyTrackIds
+    createSpotifyPlaylist, getSpotifyTrackIds, getSpotifyTrackUri
 } from "../Utils/SpotifyFunctions";
 import {
-    getAppleMusicPlaylistById
+    getAppleMusicPlaylistById, getCatalogSongById
 } from "../Utils/AppleMusicFunctions";
 import {
     TrackIdentifier
 } from "../Models/TrackId"
 
 // TODO: type req, res
+
+const getSpotifySong = async (req, res) => {
+    try {
+    const songId = req.query.songId;
+
+    // get apple music song info
+    const trackId = await getCatalogSongById(songId);
+    
+    // query spotify with that song
+    const uri = (await getSpotifyTrackUri(trackId));
+    return uri;
+
+    } catch(err) {
+        return err;
+    }
+
+}
 
 const postSpotifyPlaylist = async (req, res) => {
     const { service, id } = req.body; // TODO: strong type this
@@ -36,5 +53,6 @@ const postSpotifyPlaylist = async (req, res) => {
 }
 
 export {
-    postSpotifyPlaylist
+    postSpotifyPlaylist,
+    getSpotifySong
 }
