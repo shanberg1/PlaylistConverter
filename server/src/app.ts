@@ -130,6 +130,7 @@ export const getAuthenticateWithSpotifyCallback = (req, res) => {
         });
 }
 
+
 // TODO: refactor to some tools file or something
 async function createAppleMusicPlaylists(numberOfPlaylists: number) {
     for (let i = 1; i <= numberOfPlaylists; i++) {
