@@ -19,13 +19,13 @@ const getSpotifySong = async (req, res) => {
 
     // get apple music song info
     const trackId = await getCatalogSongById(songId);
-    
+
     // query spotify with that song
     const uri = (await getSpotifyTrackUri(trackId));
-    return uri;
+    res.send(JSON.stringify({ url: uri }));
 
     } catch(err) {
-        return err;
+        res.send(JSON.stringify(err))
     }
 
 }

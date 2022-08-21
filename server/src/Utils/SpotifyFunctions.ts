@@ -66,7 +66,7 @@ export async function getSpotifyTrackUri(trackIdentifier: TrackIdentifier): Prom
             throw err;
         })
     // TODO: add logic for more thorough checking of null values and error handling
-    return data.tracks.items[0].uri;
+    return data.tracks.items[0].external_urls.spotify;
 }
 
 export function addTracksToSpotifyPlaylist(playlistId: string, trackIds: string[]): Promise<SpotifyApi.AddTracksToPlaylistResponse> {
