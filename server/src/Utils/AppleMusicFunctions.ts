@@ -1,5 +1,6 @@
+/// <reference types="apple-music-api" />
 import * as request from "superagent";
-import * as AppleMusicApi from "apple-music-api"
+// import * as AppleMusicApi from "apple-music-api"
 import {
     _appleMusicSJWT,
     _appleMusicUserToken

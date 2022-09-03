@@ -8,7 +8,6 @@
   "author": "Scott Hanberg",
   "license": "ISC",
   "dependencies": {
-    "@types/apple-music-api": "^0.4.1",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -22,6 +21,7 @@
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
+    "@types/apple-music-api": "^0.4.1",
     "@types/node": "^15.12.2",
     "browserify": "^17.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",

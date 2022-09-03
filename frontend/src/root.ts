@@ -1,4 +1,6 @@
-import * as AppleMusicApi from "apple-music-api"
+// import * as AppleMusicApi from "apple-music-api"
+/// <reference types="apple-music-api" />
+//import AppleMusicApi = require("apple-music-api");
 import {
     Services
 } from "../../server/src/Models/RequestModel"

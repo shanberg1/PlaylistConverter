@@ -3,8 +3,8 @@ const open = require('open')
 import express = require('express');
 
 // Investigate using spotify-types
-import * as SpotifyApi from "spotify-api"
-import * as AppleMusicApi from "apple-music-api"
+// import * as SpotifyApi from "spotify-api"
+// import * as AppleMusicApi from "apple-music-api"
 
 import {
     getSpotifySong,

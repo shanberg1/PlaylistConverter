@@ -1,5 +1,6 @@
+/// <reference types="spotify-api" />
 import * as request from "superagent";
-import * as SpotifyApi from "spotify-api";
+// import * as SpotifyApi from "spotify-api";
 import {
     addTracksToSpotifyPlaylist,
     createSpotifyPlaylist, getSpotifyTrackIds, getSpotifyTrackUri

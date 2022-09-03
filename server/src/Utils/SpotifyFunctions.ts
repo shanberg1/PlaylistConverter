@@ -1,4 +1,5 @@
-import * as SpotifyApi from "spotify-api"
+/// <reference types="spotify-api" />
+// import * as SpotifyApi from "spotify-api"
 import * as request from "superagent";
 
 import {
