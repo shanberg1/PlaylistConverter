@@ -26,6 +26,7 @@ jobs:
           npm install --prefix ./frontend
           npm install --prefix ./server
           gulp -f frontend/gulpfile.js
+          cd ..
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
