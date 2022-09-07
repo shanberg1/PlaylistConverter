@@ -27,8 +27,10 @@ app.use(cors());
 var bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-// TODO: which static files am i serving here?
+// TODO: please fix the issue where it is not serving the right folder when you start it up from outside of "server"
+// app.use(express.static(`${__dirname}/public`));
 app.use(express.static('public'));
+
 
 const _backendUrl = process.env.DEBUG_MODE === "true" ? "http://localhost:3000" : "https://playlist-converter.azurewebsites.net";
 

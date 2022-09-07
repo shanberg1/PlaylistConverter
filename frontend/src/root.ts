@@ -5,9 +5,11 @@ import {
     Services
 } from "../../server/src/Models/RequestModel"
 
-document.querySelector("#convertSongButton").addEventListener("click", convertSong);
-document.querySelector("#sourceService").addEventListener("change", sourceServiceSelect);
-document.querySelector("#destinationService").addEventListener("change", destinationServiceSelect);
+document.querySelector("#convertSongButton")?.addEventListener("click", convertSong);
+document.querySelector("#urlType")?.addEventListener("change", urlTypeSelect);
+document.querySelector("#sourceService")?.addEventListener("change", sourceServiceSelect);
+document.querySelector("#destinationService")?.addEventListener("change", destinationServiceSelect);
+const urlType = getElement("urlType");
 const sourceSelect = getElement("sourceService");
 const destinationSelect = getElement("destinationService");
 const convertButton = getElement("convertSongButton");
@@ -17,6 +19,17 @@ const _debugMode = window.location.href.includes("localhost");
 const _backendUrl = _debugMode ? "http://localhost:3000" : "https://playlist-converter.azurewebsites.net";
 
 async function main() {
+    const typePlaylist = document.createElement("option");
+    typePlaylist.value = "Playlist";
+    typePlaylist.text = "Playlist";
+
+    const typeSong = document.createElement("option");
+    typeSong.value = "Song";
+    typeSong.text = "Song";
+
+    urlType.appendChild(typePlaylist);
+    urlType.appendChild(typeSong);
+
     const sourceApple = document.createElement("option");
     sourceApple.value = Services.Apple;
     sourceApple.text = "Apple";
@@ -24,12 +37,12 @@ async function main() {
     const sourceSpotify = document.createElement("option");
     sourceSpotify.value = Services.Spotify;
     sourceSpotify.text = "Spotify";
-    sourceSpotify.disabled = true;
+    // sourceSpotify.disabled = true;
 
     const destinationApple = document.createElement("option");
     destinationApple.value = Services.Apple;
     destinationApple.text = "Apple";
-    destinationApple.disabled = true;
+    // destinationApple.disabled = true;
 
     const destinationSpotify = document.createElement("option");
     destinationSpotify.value = Services.Spotify;
@@ -39,6 +52,10 @@ async function main() {
     sourceSelect.appendChild(sourceSpotify);
     destinationSelect.appendChild(destinationSpotify);
     destinationSelect.appendChild(destinationApple);
+}
+
+export function urlTypeSelect() {
+    console.log("url type select");
 }
 
 export function sourceServiceSelect() {
