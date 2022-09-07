@@ -14,15 +14,19 @@ import {
 } from "../Models/TrackId"
 
 export const getAppleMusicSong = async (req, res) => {
-    const songId = req.query["songId"];
+    try {
+        const songId = req.query["songId"];
 
-    // get apple music song info
-    const trackId = await getTrackIdFromSptofyId(songId);
+        // get apple music song info
+        const trackId = await getTrackIdFromSptofyId(songId);
 
-    // query apple music with that song
-    const uri = await searchForSongApple(trackId.name);
+        // query apple music with that song
+        const songDetails = await searchForSongApple(trackId.name);
 
-    return uri;
+        res.send(JSON.stringify({ url: songDetails.attributes.url }));
+    } catch(err) {
+        res.send(JSON.stringify(err))
+    }
 }
 
 export const postApplePlaylist = async (req, res) => {
