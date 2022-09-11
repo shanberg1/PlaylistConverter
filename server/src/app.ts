@@ -1,6 +1,7 @@
 import * as request from "superagent";
 const open = require('open')
 import express = require('express');
+const path = require('path')
 
 // Investigate using spotify-types
 // import * as SpotifyApi from "spotify-api"
@@ -28,8 +29,8 @@ var bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 // TODO: please fix the issue where it is not serving the right folder when you start it up from outside of "server"
-// app.use(express.static(`${__dirname}/public`));
-app.use(express.static('public'));
+app.use('/', express.static(path.join(`${__dirname}`, '..', 'public')));
+// app.use(express.static('public'));
 
 
 const _backendUrl = process.env.DEBUG_MODE === "true" ? "http://localhost:3000" : "https://playlist-converter.azurewebsites.net";
@@ -143,6 +144,9 @@ async function createAppleMusicPlaylists(numberOfPlaylists: number) {
     }
 }
 
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, '..', 'public', '/root.html'));
+});
 app.get('/authentication/spotify', getAuthenticateWithSpotifyCallback);
 app.get('/echo', (req, res) => {
     res.send("hello, passive")
