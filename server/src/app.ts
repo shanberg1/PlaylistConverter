@@ -27,6 +27,33 @@ var cors = require('cors');
 app.use(cors());
 var bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const dbConnectionString = process.env.SQLCONNSTR_db;
+
+
+var Connection = require('tedious').Connection;  
+var config = {  
+    server: process.env.DB_SERVER,  //update me
+    authentication: {
+        type: 'default',
+        options: {
+            userName: process.env.DB_USERNAME, //update me
+            password: process.env.DB_PASSWORD  //update me
+        }
+    },
+    options: {
+        // If you are on Microsoft Azure, you need encryption:
+        encrypt: true,
+        database: process.env.DB_DATABASENAME //update me
+    }
+};  
+export var connection = new Connection(config);  
+connection.on('connect', function(err) {  
+    // If no error, then good to proceed.
+    console.log("Connected");  
+});
+
+connection.connect();
+
 
 // TODO: please fix the issue where it is not serving the right folder when you start it up from outside of "server"
 app.use('/', express.static(path.join(`${__dirname}`, '..', 'public')));

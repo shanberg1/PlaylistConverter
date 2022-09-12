@@ -43,10 +43,11 @@ export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<str
             })
             .catch(err => {
                 console.log(err);
-                throw err;
+                return null;
+                // throw err;
             })
         // TODO: add logic for more thorough checking of null values and error handling
-        data.tracks.items[0]?.id && spotifyTrackIds.push(`spotify:track:${data.tracks.items[0].id}`);
+        data?.tracks?.items[0]?.id && spotifyTrackIds.push(`spotify:track:${data.tracks.items[0].id}`);
     }
     return spotifyTrackIds;
 }

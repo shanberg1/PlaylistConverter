@@ -15,7 +15,8 @@
         "jsrsasign": "^10.3.0",
         "open": "^8.2.1",
         "path": "^0.12.7",
-        "superagent": "^6.1.0"
+        "superagent": "^6.1.0",
+        "tedious": "^15.1.0"
     },
     "proxy": "http://localhost:3000",
     "devDependencies": {

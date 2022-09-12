@@ -5,7 +5,7 @@ import {
     Services
 } from "../../server/src/Models/RequestModel"
 
-document.querySelector("#convertSongButton")?.addEventListener("click", convertSong);
+document.querySelector("#convertSongButton")?.addEventListener("click", convert);
 document.querySelector("#urlType")?.addEventListener("change", urlTypeSelect);
 document.querySelector("#sourceService")?.addEventListener("change", sourceServiceSelect);
 document.querySelector("#destinationService")?.addEventListener("change", destinationServiceSelect);
@@ -68,8 +68,23 @@ export function destinationServiceSelect() {
     convertButton.disabled = sourceSelect.value === destinationSelect.value;
 }
 
+export function convert() {
+    const urlType = getElement("urlType").value;
+    switch (urlType) {
+        case "Playlist":
+            convertPlaylist();
+            break;
+        case "Song":
+            convertSong();
+            break;
+        default:
+            console.log("incorrect type");
+            break;
+    }
+}
+
 export function convertPlaylist() {
-    const playlisturl = getElement("playlistUrl").value;
+    const playlisturl = getElement("songUrl").value;
     const destEndpoint = destinationSelect.value === Services.Apple ? "applemusic" : "spotify";
     return fetch(`${_backendUrl}/service/${destEndpoint}/playlist`,
         {
@@ -86,7 +101,7 @@ export function convertPlaylist() {
         .then(res => {
             return res.json();
         }).then((data) => {
-            const newPlaylist = getElement("newPlaylistUrl");
+            const newPlaylist = getElement("newSongUrl");
             newPlaylist.value = data.url;
             return data;
         })

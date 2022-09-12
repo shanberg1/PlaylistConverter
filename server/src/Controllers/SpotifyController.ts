@@ -34,6 +34,7 @@ const getSpotifySong = async (req, res) => {
 const postSpotifyPlaylist = async (req, res) => {
     const { service, id } = req.body; // TODO: strong type this
     console.log("post to /services/spotify/playlist");
+    try {
     switch (service) {
         case "AppleMusic":
             const appleMusicPlaylist = await getAppleMusicPlaylistById("us", id);
@@ -50,6 +51,9 @@ const postSpotifyPlaylist = async (req, res) => {
             const spotifyPlaylist = await createSpotifyPlaylist(name);
             await addTracksToSpotifyPlaylist(spotifyPlaylist.id, spotifyTrackIds);
             res.send(JSON.stringify({ url: spotifyPlaylist.external_urls.spotify }));
+    }
+    } catch(err) {
+        res.send(JSON.stringify(err))
     }
 }
 
