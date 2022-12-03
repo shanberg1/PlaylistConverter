@@ -4,10 +4,18 @@ import {
 import {
     getAppleMusicTrackIds,
     createAppleMusicPlaylist,
-    getAppleMusicPlaylistById,
+    getCatalogAppleMusicPlaylistById,
     searchForSongApple,
+    addTracksToAppleMusicPlaylist,
+    getLibraryAppleMusicPlaylistById,
+    getAllLibraryPlaylists,
+    deleteSongsFromAppleMusicLibrary,
 
 } from "../Utils/AppleMusicFunctions"
+
+import {
+    getOldestAppleMusicPlaylist
+} from "../Utils/DatabaseHandler"
 
 import {
     TrackIdentifier
@@ -32,6 +40,7 @@ export const getAppleMusicSong = async (req, res) => {
 export const postApplePlaylist = async (req, res) => {
     const { service, id, region } = req.body;
     console.log("POST to /service/appleMusic/playlist");
+    try {
     switch (service) {
         case "Spotify":
             const spotifyPlaylist = await getSpotifyPlaylist(id);
@@ -46,9 +55,17 @@ export const postApplePlaylist = async (req, res) => {
                     }
                 });
             const appleMusicTrackIds = await getAppleMusicTrackIds(region, trackIds);
-            // const appleMusicPlaylist = await getOldestAppleMusicPlaylist();
+            const appleMusicPlaylist = await getOldestAppleMusicPlaylist();
             // const newPlaylist = await getAppleMusicPlaylist(region, appleMusicPlaylist.id)
             // const newp = `https://music.apple.com/us/playlist/${appleMusicPlaylist.attributes.name}/${appleMusicPlaylist.id}`
-            res.send(JSON.stringify({ url: ""/*appleMusicPlaylist.href*/ }));
+            const playlists = await getAllLibraryPlaylists();
+            const playlist = await getLibraryAppleMusicPlaylistById(appleMusicPlaylist);
+            // delete all old songs on the playlist
+            deleteSongsFromAppleMusicLibrary(playlist.relationships.tracks.data.map(track => track.id))
+            await addTracksToAppleMusicPlaylist("us", appleMusicTrackIds, appleMusicPlaylist)
+            res.send(JSON.stringify({ url: `https://music.apple.com/us/playlist/${(<any>playlist.attributes.playParams).globalId}` }));
     }
+} catch(err) {
+    res.send(JSON.stringify(err))
+}
 }

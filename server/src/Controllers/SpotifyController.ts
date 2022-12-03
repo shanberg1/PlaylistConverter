@@ -6,7 +6,7 @@ import {
     createSpotifyPlaylist, getSpotifyTrackIds, getSpotifyTrackUri
 } from "../Utils/SpotifyFunctions";
 import {
-    getAppleMusicPlaylistById, getCatalogSongById
+    getCatalogAppleMusicPlaylistById, getCatalogSongById
 } from "../Utils/AppleMusicFunctions";
 import {
     TrackIdentifier
@@ -37,7 +37,7 @@ const postSpotifyPlaylist = async (req, res) => {
     try {
     switch (service) {
         case "AppleMusic":
-            const appleMusicPlaylist = await getAppleMusicPlaylistById("us", id);
+            const appleMusicPlaylist = await getCatalogAppleMusicPlaylistById("us", id);
             const name = appleMusicPlaylist.attributes.name;
             const trackIds: TrackIdentifier[] = appleMusicPlaylist.relationships.tracks.data
                 .map((track) => {

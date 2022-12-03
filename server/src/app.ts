@@ -30,30 +30,7 @@ const jsonParser = bodyParser.json();
 const dbConnectionString = process.env.SQLCONNSTR_db;
 
 
-var Connection = require('tedious').Connection;  
-var config = {  
-    server: process.env.DB_SERVER,  //update me
-    authentication: {
-        type: 'default',
-        options: {
-            userName: process.env.DB_USERNAME, //update me
-            password: process.env.DB_PASSWORD  //update me
-        }
-    },
-    options: {
-        // If you are on Microsoft Azure, you need encryption:
-        encrypt: true,
-        database: process.env.DB_DATABASENAME //update me
-    }
-};  
-export var connection = new Connection(config);  
-connection.on('connect', function(err) {  
-    // If no error, then good to proceed.
-    console.log("Connected");  
-});
-
-connection.connect();
-
+export var Connection = require('tedious').Connection;  
 
 // TODO: please fix the issue where it is not serving the right folder when you start it up from outside of "server"
 app.use('/', express.static(path.join(`${__dirname}`, '..', 'public')));
@@ -68,6 +45,8 @@ let _spotifyAuthorizationCode: string;
 let _spotifyAccessToken: string;
 const _debugMode = process.env.DEBUG_MODE;
 const _appleMusicUserToken = process.env.APPLE_MUSIC_USER_TOKEN;
+const _appleDeveloperToken = process.env.APPLE_MUSIC_DEV_TOKEN;
+const _appleMusicSecretToken = process.env.APPLE_MUSIC_SECRET_USER_TOKEN;
 
 export {
     _spotifyClientCert,
@@ -75,6 +54,8 @@ export {
     _appleMusicSJWT,
     _spotifyAuthorizationCode,
     _appleMusicUserToken,
+    _appleDeveloperToken,
+    _appleMusicSecretToken
 }
 
 init();

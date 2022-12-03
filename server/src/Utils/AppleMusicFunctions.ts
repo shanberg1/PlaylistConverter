@@ -2,6 +2,8 @@
 import * as request from "superagent";
 // import * as AppleMusicApi from "apple-music-api"
 import {
+    _appleDeveloperToken,
+    _appleMusicSecretToken,
     _appleMusicSJWT,
     _appleMusicUserToken
 } from "../app"
@@ -29,11 +31,7 @@ export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentif
     return appleMusicTrackIds;
 }
 
-export function getOldestAppleMusicPlaylist() {
-
-}
-
-export function getAppleMusicPlaylistById(region: string, playlistId: string): Promise<AppleMusicApi.Playlist> {
+export function getCatalogAppleMusicPlaylistById(region: string, playlistId: string): Promise<AppleMusicApi.Playlist> {
     return request
         .get(`https://api.music.apple.com/v1/catalog/${region}/playlists/${playlistId}`)
         .set("Authorization", "Bearer " + _appleMusicSJWT)
@@ -50,18 +48,69 @@ export function getAppleMusicPlaylistById(region: string, playlistId: string): P
         });
 }
 
-export function addTracksToAppleMusicPlaylist(region: string, tracks: string[], playlistId: string): Promise<AppleMusicApi.Playlist> {
+export function getLibraryAppleMusicPlaylistById(playlistId: string): Promise<AppleMusicApi.Playlist> {
+    return request
+        .get(`https://api.music.apple.com/v1/me/library/playlists/${playlistId}?relate=tracks`)
+        .set("Authorization", "Bearer " + _appleMusicSJWT)
+        .set("Music-User-Token", _appleMusicUserToken)
+        .then(value => {
+            return value.body;
+        })
+        .then((data: AppleMusicApi.PlaylistResponse) => {
+            return (data.data[0]);
+        })
+        .catch(err => {
+            console.log(err);
+            throw err;
+        });
+}
+
+export function getAllLibraryPlaylists(): Promise<AppleMusicApi.Playlist[]> {
+    return request
+        .get(`https://api.music.apple.com/v1/me/library/playlists`)
+        .set("Authorization", "Bearer " + _appleMusicSJWT)
+        .set("Music-User-Token", _appleMusicUserToken)
+        .then(value => {
+            return value.body;
+        })
+        .then((data: AppleMusicApi.PlaylistResponse) => {
+            return (data.data);
+        })
+        .catch(err => {
+            console.log(err);
+            throw err;
+        });
+}
+
+export async function deleteSongsFromAppleMusicLibrary(tracks: string[]): Promise<void> {
+    tracks.forEach(async (track) => {
+        await request
+            .delete(`https://amp-api.music.apple.com/v1/me/library/songs/${track}`)
+            .set("Authorization", "Bearer " + _appleDeveloperToken)
+            .set("Music-User-Token", _appleMusicSecretToken)
+            .set("origin", "https://music.apple.com")
+            .set("referrer", "https://music.apple.com/")
+            .then(value => {
+                return;
+            })
+                .catch(err => {
+                console.log(err);
+                throw err;
+            });
+        });
+        
+}
+
+export function addTracksToAppleMusicPlaylist(region: string, tracks: string[], playlistId: string): Promise<string> {
     // requires a LibraryPlaylistTracksRequest object but it does not exist in the type api
     const libraryPlaylistTrackRequest =
     {
-        tracks: {
-            data: tracks?.map((track) => {
-                return {
-                    id: track,
-                    type: "songs"
-                }
-            })
-        }
+        data: tracks?.map((track) => {
+            return {
+                id: track,
+                type: "songs"
+            }
+        })
     }
 
     return request
@@ -74,7 +123,7 @@ export function addTracksToAppleMusicPlaylist(region: string, tracks: string[], 
         })
         .then((data: AppleMusicApi.PlaylistResponse) => {
             // TODO: possibly wont return playlist object response
-            return (data.data[0]);
+            return (playlistId);
         })
         .catch(err => {
             console.log(err);
