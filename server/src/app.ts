@@ -92,28 +92,35 @@ function init() {
     _appleMusicSJWT = rs.KJUR.jws.JWS.sign
         (null, sHeader, sPayload, process.env.APPLE_MUSIC_PRIVATE_KEY);
     console.log(_appleMusicSJWT);
+    refreshSpotifyAccessToken();
+}
 
+function refreshSpotifyAccessToken() {
     // get spotify token
     // const url = `https://accounts.spotify.com/authorize?client_id=${process.env.SPOTIFY_CLIENT_ID}&response_type=code&scope=playlist-modify-public%20playlist-modify-private&redirect_uri=${_backendUrl}/authentication/spotify`;
     // open(url)
     request
-        .post("https://accounts.spotify.com/api/token")
-        .send({
-            grant_type: "refresh_token",
-            refresh_token: process.env.SPOTIFY_REFRESH_TOKEN
-        }) // sends a JSON post body
-        .set('Authorization', 'Basic ' + process.env.SPOTIFY_ENCODED_ID)
-        .set('Content-Type', 'application/x-www-form-urlencoded')
-        //.set('accept', 'json')
-        .end((err, result) => {
-            if (err) {
-                console.log("Error retrieving auth code" + err);
-            }
-            if (result) {
-                console.log("successfully refreshed access token");
-                _spotifyAccessToken = result.body.access_token;
-            }
-        });
+    .post("https://accounts.spotify.com/api/token")
+    .send({
+        grant_type: "refresh_token",
+        refresh_token: process.env.SPOTIFY_REFRESH_TOKEN
+    }) // sends a JSON post body
+    .set('Authorization', 'Basic ' + process.env.SPOTIFY_ENCODED_ID)
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    //.set('accept', 'json')
+    .end((err, result) => {
+        if (err) {
+            console.log("Error retrieving auth code" + err);
+        }
+        if (result) {
+            console.log("successfully refreshed access token");
+            _spotifyAccessToken = result.body.access_token;
+        }
+    });
+
+    setInterval(function() {
+        refreshSpotifyAccessToken();
+    }, 3600000);
 }
 
 export const getAuthenticateWithSpotifyCallback = (req, res) => {
