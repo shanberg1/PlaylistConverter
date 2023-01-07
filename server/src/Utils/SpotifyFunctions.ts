@@ -1,6 +1,7 @@
 /// <reference types="spotify-api" />
 // import * as SpotifyApi from "spotify-api"
 import * as request from "superagent";
+var stringSimilarity = require("string-similarity");
 
 import {
     _spotifyClientCert,
@@ -32,11 +33,12 @@ export async function getTrackIdFromSptofyId(id: string): Promise<TrackIdentifie
 export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<string[]> {
     var spotifyTrackIds = new Array();
     for (const trackIdentifier of tracks) {
-        const data = await request
+        const data: SpotifyApi.SearchResponse = await request
             .get("https://api.spotify.com/v1/search")
             .set("Authorization", "Bearer " + _spotifyClientCert)
             .set('Content-Type', 'application/x-www-form-urlencoded')
-            .query((`q=track:${encodeURIComponent(trackIdentifier.name)} album:${encodeURIComponent(trackIdentifier.album)} artist:${encodeURIComponent(trackIdentifier.artist)}`))
+            // .query((`q=track:${encodeURIComponent(trackIdentifier.name.replace('\'', ''))} album:${encodeURIComponent(trackIdentifier.album.replace('\'', ''))} artist:${encodeURIComponent(trackIdentifier.artist.replace('\'', ''))}`))
+            .query((`q=${encodeURIComponent(`${trackIdentifier.name} ${trackIdentifier.album} ${trackIdentifier.artist}`)}`))
             .query("type=track")
             .then((value) => {
                 return value.body as SpotifyApi.SearchResponse;
@@ -47,7 +49,20 @@ export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<str
                 // throw err;
             })
         // TODO: add logic for more thorough checking of null values and error handling
-        data?.tracks?.items[0]?.id && spotifyTrackIds.push(`spotify:track:${data.tracks.items[0].id}`);
+        const trackResults = data.tracks.items;
+        const songSimilarityArray = new Array<number>(trackResults.length);
+        trackResults.forEach((track, index) => {
+            const titleSimilarity = stringSimilarity.compareTwoStrings(track.name, trackIdentifier.name);
+            const albumSimilarity = stringSimilarity.compareTwoStrings(track.album.name, trackIdentifier.album);
+            // Have to go through all of the other artists
+            const artistSimilarity = stringSimilarity.compareTwoStrings(track.artists[0].name, trackIdentifier.artist);
+            songSimilarityArray[index] = titleSimilarity + albumSimilarity + artistSimilarity;
+        })
+
+        const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
+        // appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
+        trackResults[indexOfMaxArray]?.id && spotifyTrackIds.push(`spotify:track:${trackResults[indexOfMaxArray].id}`);
+        // data?.tracks?.items[0]?.id && spotifyTrackIds.push(`spotify:track:${data.tracks.items[0].id}`);
     }
     return spotifyTrackIds;
 }
