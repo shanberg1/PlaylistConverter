@@ -15,6 +15,7 @@
         "jsrsasign": "^10.3.0",
         "open": "^8.2.1",
         "path": "^0.12.7",
+        "string-similarity": "^4.0.4",
         "superagent": "^6.1.0",
         "tedious": "^15.1.0"
     },
