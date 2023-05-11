@@ -86,7 +86,7 @@ function init() {
     oPayload.iss = "948C3QY783";
     oPayload.iat = tNow;
     oPayload.exp = tEnd;
-    // Sign JWT, password=616161
+    // Sign JWT, password=APPLE_MUSIC_PRIVATE_KEY
     var sHeader = JSON.stringify(oHeader);
     var sPayload = JSON.stringify(oPayload);
     _appleMusicSJWT = rs.KJUR.jws.JWS.sign
@@ -113,7 +113,7 @@ function refreshSpotifyAccessToken() {
             console.log("Error retrieving auth code" + err);
         }
         if (result) {
-            console.log("successfully refreshed access token");
+            console.log("successfully refreshed spotify access token");
             _spotifyAccessToken = result.body.access_token;
         }
     });

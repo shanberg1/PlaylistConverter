@@ -24,6 +24,11 @@ export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentif
                 return value.body;
             })
             .then((data: any /* TODO: find apple music ts version */) => {
+                if (!data) {
+                    console.log(`Nothing found for track ${trackIdentifier.name}`);
+                    return;
+                }
+                
                 const songResults = <AppleMusicApi.Relationship<AppleMusicApi.Song>> data.results.songs;
                 const songSimilarityArray = new Array<number>(songResults.data.length);
                 songResults.data.forEach((song, index) => {
@@ -46,6 +51,7 @@ export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentif
 }
 
 export function getCatalogAppleMusicPlaylistById(region: string, playlistId: string): Promise<AppleMusicApi.Playlist> {
+    console.log(`retriving playlist ${playlistId} from Apple Music`);
     return request
         .get(`https://api.music.apple.com/v1/catalog/${region}/playlists/${playlistId}`)
         .set("Authorization", "Bearer " + _appleMusicSJWT)
@@ -54,6 +60,7 @@ export function getCatalogAppleMusicPlaylistById(region: string, playlistId: str
             return value.body;
         })
         .then((data: AppleMusicApi.PlaylistResponse) => {
+            console.log(`Retrieved ${data.data[0].id} from apple`)
             return (data.data[0]);
         })
         .catch(err => {
