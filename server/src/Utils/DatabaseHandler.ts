@@ -10,18 +10,17 @@ var isConnectionReady = true;
 export async function getOldestAppleMusicPlaylist(): Promise<string> {
     // connect to db
     var config = {  
-        server: process.env.DB_SERVER,  //update me
+        server: process.env.DB_SERVER,
         authentication: {
             type: 'default',
             options: {
-                userName: process.env.DB_USERNAME, //update me
-                password: process.env.DB_PASSWORD  //update me
+                userName: process.env.DB_USERNAME,
+                password: process.env.DB_PASSWORD 
             }
         },
         options: {
-            // If you are on Microsoft Azure, you need encryption:
             encrypt: true,
-            database: process.env.DB_DATABASENAME //update me
+            database: process.env.DB_DATABASENAME
         }
     };  
     var connection = new Connection(config);  
@@ -38,23 +37,11 @@ function getAppleMusicPlaylists(connection: any, callback: (id: string) => any) 
     const request = new Request("SELECT TOP 1 * From [dbo].[apple_music_playlists] ORDER BY last_updated_time_utc ASC", function(err) {  
         if (err) {  
             console.log(err);
-            // callback("");
             return;
         }
-        // callback(playlistId);
         updateIdInPlaylistRetrieved(connection, callback, playlistId, id)
     });
     request.on('row', function(columns) {  
-            // columns.forEach(function(column) {  
-            //   if (column.value === null) {  
-            //     console.log('NULL');  
-            //   } else {  
-            //     result+= column.value + " ";
-            //     playlistId = column
-            //   }  
-            // });  
-            // console.log(result);  
-            // result ="";  
             playlistId = columns[3].value;
             id=columns[0].value;
     });  
@@ -62,12 +49,6 @@ function getAppleMusicPlaylists(connection: any, callback: (id: string) => any) 
     request.on('done', function(rowCount, more) {  
          console.log(rowCount + ' rows returned');  
     });  
-        
-        // // Close the connection after the final event emitted by the request, after the callback passes
-        // request.on("requestCompleted", function (rowCount, more) {
-        //     callback(playlistId);
-        //     connection.close();
-        // });
 
     connection.connect();
 
@@ -90,17 +71,11 @@ function updateIdInPlaylistRetrieved(connection: any, callback: (id: string) => 
         console.log('Insert failed');
         throw err;
       }
-  
-      console.log('new Request cb');
-  
-      // Call connection.beginTransaction() method in this 'new Request' call back function
+
+      callback(playlistId);
+      connection.close();
     });
 
-    // Close the connection after the final event emitted by the request, after the callback passes
-    request.on("requestCompleted", function (rowCount, more) {
-        callback(playlistId);
-        connection.close();
-    });
   
     connection.execSql(request);
 }

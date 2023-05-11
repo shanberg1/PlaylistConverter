@@ -27,15 +27,10 @@ var cors = require('cors');
 app.use(cors());
 var bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
-const dbConnectionString = process.env.SQLCONNSTR_db;
-
 
 export var Connection = require('tedious').Connection;  
 
-// TODO: please fix the issue where it is not serving the right folder when you start it up from outside of "server"
 app.use('/', express.static(path.join(`${__dirname}`, '..', 'public')));
-// app.use(express.static('public'));
-
 
 const _backendUrl = process.env.DEBUG_MODE === "true" ? "http://localhost:3000" : "https://playlist-converter.azurewebsites.net";
 
@@ -54,7 +49,7 @@ export {
     _appleMusicSJWT,
     _spotifyAuthorizationCode,
     _appleMusicUserToken,
-    _appleDeveloperToken,
+     _appleDeveloperToken,
     _appleMusicSecretToken
 }
 
@@ -63,10 +58,9 @@ function init() {
     // get spotify client cert
     request
         .post("https://accounts.spotify.com/api/token")
-        .send({ grant_type: "client_credentials" }) // sends a JSON post body
+        .send({ grant_type: "client_credentials" })
         .set('Authorization', 'Basic ' + process.env.SPOTIFY_ENCODED_ID)
         .set('Content-Type', 'application/x-www-form-urlencoded')
-        //.set('accept', 'json')
         .end((err, result) => {
             if (err) {
                 console.log("Error retrieving client certificate" + err);
@@ -91,23 +85,20 @@ function init() {
     var sPayload = JSON.stringify(oPayload);
     _appleMusicSJWT = rs.KJUR.jws.JWS.sign
         (null, sHeader, sPayload, process.env.APPLE_MUSIC_PRIVATE_KEY);
-    console.log(_appleMusicSJWT);
     refreshSpotifyAccessToken();
 }
 
 function refreshSpotifyAccessToken() {
     // get spotify token
-    // const url = `https://accounts.spotify.com/authorize?client_id=${process.env.SPOTIFY_CLIENT_ID}&response_type=code&scope=playlist-modify-public%20playlist-modify-private&redirect_uri=${_backendUrl}/authentication/spotify`;
-    // open(url)
+    console.log("Attempting to retrieve spotify access token")
     request
     .post("https://accounts.spotify.com/api/token")
     .send({
         grant_type: "refresh_token",
         refresh_token: process.env.SPOTIFY_REFRESH_TOKEN
-    }) // sends a JSON post body
+    })
     .set('Authorization', 'Basic ' + process.env.SPOTIFY_ENCODED_ID)
     .set('Content-Type', 'application/x-www-form-urlencoded')
-    //.set('accept', 'json')
     .end((err, result) => {
         if (err) {
             console.log("Error retrieving auth code" + err);

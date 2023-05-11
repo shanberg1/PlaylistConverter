@@ -38,7 +38,6 @@ export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<str
             .get("https://api.spotify.com/v1/search")
             .set("Authorization", "Bearer " + _spotifyClientCert)
             .set('Content-Type', 'application/x-www-form-urlencoded')
-            // .query((`q=track:${encodeURIComponent(trackIdentifier.name.replace('\'', ''))} album:${encodeURIComponent(trackIdentifier.album.replace('\'', ''))} artist:${encodeURIComponent(trackIdentifier.artist.replace('\'', ''))}`))
             .query((`q=${encodeURIComponent(`${trackIdentifier.name} ${trackIdentifier.album} ${trackIdentifier.artist}`)}`))
             .query("type=track")
             .then((value) => {
@@ -48,7 +47,6 @@ export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<str
             .catch(err => {
                 console.log(err);
                 return null;
-                // throw err;
             })
         // TODO: add logic for more thorough checking of null values and error handling
         const trackResults = data.tracks.items;
@@ -62,9 +60,7 @@ export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<str
         })
 
         const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
-        // appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
         trackResults[indexOfMaxArray]?.id && spotifyTrackIds.push(`spotify:track:${trackResults[indexOfMaxArray].id}`);
-        // data?.tracks?.items[0]?.id && spotifyTrackIds.push(`spotify:track:${data.tracks.items[0].id}`);
     }
     console.log("finishing getting spotify track id")
     return spotifyTrackIds;

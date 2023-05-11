@@ -15,7 +15,7 @@ export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentif
     var appleMusicTrackIds = new Array();
     for (const trackIdentifier of tracks) {
         // Spotify tends to put a dash after the normal song title, with something like "In My Room - Remastered 2014". Taking everything before the dash to improve accuracy.
-        // ^ this helped bigly. I may need to refactor later when i add more services.
+        // ^ this helped a lot. I may need to refactor later when i add more services.
         const searchTerm = trackIdentifier.name.split('-')[0].concat(' ').concat(trackIdentifier.artist).replace(' ', '+');
         await request
             .get(`https://api.music.apple.com/v1/catalog/${region}/search?term=${searchTerm}&types=songs`)
@@ -40,11 +40,9 @@ export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentif
 
                 const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
                 appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
-                // appleMusicTrackIds.push(songResults.data[0].id);
             })
             .catch(err => {
                 console.log(err);
-                // throw err;
             });
     }
     return appleMusicTrackIds;
@@ -65,7 +63,7 @@ export function getCatalogAppleMusicPlaylistById(region: string, playlistId: str
         })
         .catch(err => {
             console.log(err);
-            throw err;
+            return null;
         });
 }
 
@@ -82,7 +80,7 @@ export function getLibraryAppleMusicPlaylistById(playlistId: string): Promise<Ap
         })
         .catch(err => {
             console.log(err);
-            throw err;
+            return null;
         });
 }
 
@@ -99,7 +97,7 @@ export function getAllLibraryPlaylists(): Promise<AppleMusicApi.Playlist[]> {
         })
         .catch(err => {
             console.log(err);
-            throw err;
+            return null;
         });
 }
 
@@ -114,9 +112,8 @@ export async function deleteSongsFromAppleMusicLibrary(tracks: string[]): Promis
             .then(value => {
                 return;
             })
-                .catch(err => {
+            .catch(err => {
                 console.log(err);
-                throw err;
             });
         });
         
@@ -148,7 +145,7 @@ export function addTracksToAppleMusicPlaylist(region: string, tracks: string[], 
         })
         .catch(err => {
             console.log(err);
-            throw err;
+            return null;
         });
 }
 
@@ -184,7 +181,7 @@ export function createAppleMusicPlaylist(region: string, playlistInfo: PlaylistI
         })
         .catch(err => {
             console.log(err);
-            throw err;
+            return null;
         });
 }
 
@@ -194,9 +191,7 @@ export function searchForSongApple(name: string) {
     return request
         .get("https://api.music.apple.com/v1/catalog/us/search")
         .set("Authorization", "Bearer " + appleAccessToken)
-        //.set('Content-Type', 'application/x-www-form-urlencoded')
         .query("term=" + name)
-        //.query("types=songs")
         .then((value) => {
             return value.body
         })
@@ -206,7 +201,7 @@ export function searchForSongApple(name: string) {
         })
         .catch(err => {
             console.log(err);
-            throw err;
+            return null;
         });
 }
 
@@ -228,6 +223,6 @@ export function getCatalogSongById(id: string): Promise<TrackIdentifier> {
         })
         .catch(err => {
             console.log(err.response.error);
-            throw err;
+            return null;
         });
 }
