@@ -10,7 +10,7 @@
 .controls {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 3fr auto 1fr auto;
+    grid-template-rows: 0.5fr auto 1fr auto;
     grid-gap:5px;
 }
 
