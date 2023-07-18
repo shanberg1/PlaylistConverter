@@ -16,7 +16,6 @@ export class HomePage {
         document.querySelector("#urlType")?.addEventListener("change", this.urlTypeSelect);
         document.querySelector("#sourceService")?.addEventListener("change", this.sourceServiceSelect);
         document.querySelector("#destinationService")?.addEventListener("change", this.destinationServiceSelect);
-        document.querySelector("#url")?.addEventListener("change", () => {});
         
         this.urlType = getElement("urlType");
         this.sourceSelect = getElement("sourceService");
@@ -133,7 +132,7 @@ export class HomePage {
     }
 }
 
-function getElement(element: string): HTMLInputElement {
+export function getElement(element: string): HTMLInputElement {
     return (<HTMLInputElement>document.getElementById(element));
 }
 
