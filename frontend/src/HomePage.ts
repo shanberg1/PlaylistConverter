@@ -2,6 +2,7 @@ import { _backendUrl } from "./Constants";
 import {
     Services
 } from "../../server/src/Models/RequestModel"
+import { UrlTextbox } from "./Controls/UrlTextbox";
 /// <reference types="apple-music-api" />
 
 export class HomePage {
@@ -10,6 +11,7 @@ export class HomePage {
     private sourceSelect: HTMLInputElement;
     private destinationSelect: HTMLInputElement;
     private convertButton: HTMLInputElement;
+    private urlTextbox: UrlTextbox;
 
     constructor() {
         document.querySelector("#convertSongButton")?.addEventListener("click", this.convert);
@@ -55,6 +57,8 @@ export class HomePage {
         this.sourceSelect.appendChild(sourceSpotify);
         this.destinationSelect.appendChild(destinationSpotify);
         this.destinationSelect.appendChild(destinationApple);
+
+        this.urlTextbox = new UrlTextbox();
     }
 
     private convert() {
