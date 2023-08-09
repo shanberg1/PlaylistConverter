@@ -10,7 +10,8 @@
         "strictNullChecks": false,
         "noImplicitAny": false,
         "moduleResolution": "node",
-        "sourceMap": true
+        "sourceMap": true,
+        "experimentalDecorators": true
     },
     "$schema": "https://json.schemastore.org/tsconfig",
     "display": "Recommended",

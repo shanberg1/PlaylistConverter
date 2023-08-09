@@ -33,13 +33,11 @@
 
 .urlTextboxes {
     display: grid;
-    grid-template-columns: 50% 50%;
-    grid-gap:5px;
-    justify-content: center;
+    place-items: center;
 }
 
 .songTextBox {
-
+    width: 250px;
 }
 
 div.selectControls label       { text-align:right; }

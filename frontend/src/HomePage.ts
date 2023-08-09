@@ -3,6 +3,7 @@ import {
     Services
 } from "../../server/src/Models/RequestModel"
 import { UrlTextbox } from "./Controls/UrlTextbox";
+import { Media, Service } from "./Models/Models";
 /// <reference types="apple-music-api" />
 
 export class HomePage {
@@ -11,6 +12,8 @@ export class HomePage {
     private sourceSelect: HTMLInputElement;
     private destinationSelect: HTMLInputElement;
     private convertButton: HTMLInputElement;
+    private sourceService: Service;
+    private media: Media;
     private urlTextbox: UrlTextbox;
 
     constructor() {
@@ -35,14 +38,14 @@ export class HomePage {
         this.urlType.appendChild(typePlaylist);
         this.urlType.appendChild(typeSong);
     
-        const sourceApple = document.createElement("option");
-        sourceApple.value = Services.Apple;
-        sourceApple.text = "Apple";
+        // const sourceApple = document.createElement("option");
+        // sourceApple.value = Services.Apple;
+        // sourceApple.text = "Apple";
     
-        const sourceSpotify = document.createElement("option");
-        sourceSpotify.value = Services.Spotify;
-        sourceSpotify.text = "Spotify";
-        // sourceSpotify.disabled = true;
+        // const sourceSpotify = document.createElement("option");
+        // sourceSpotify.value = Services.Spotify;
+        // sourceSpotify.text = "Spotify";
+        // // sourceSpotify.disabled = true;
     
         const destinationApple = document.createElement("option");
         destinationApple.value = Services.Apple;
@@ -53,12 +56,40 @@ export class HomePage {
         destinationSpotify.value = Services.Spotify;
         destinationSpotify.text = "Spotify";
     
-        this.sourceSelect.appendChild(sourceApple);
-        this.sourceSelect.appendChild(sourceSpotify);
+        // this.sourceSelect.appendChild(sourceApple);
+        // this.sourceSelect.appendChild(sourceSpotify);
         this.destinationSelect.appendChild(destinationSpotify);
         this.destinationSelect.appendChild(destinationApple);
 
-        this.urlTextbox = new UrlTextbox();
+        // this.setSource.bind(this);
+        this.urlTextbox = new UrlTextbox((service, media) => this.setSource(service, media));
+    }
+
+    private setSource(service: Service, media: Media) {
+        this.sourceService = service;
+        this.media = media;
+
+        console.log("setting source")
+        switch(this.sourceService) {
+            case "Spotify":
+                this.setSelectOption(this.destinationSelect, Services.Apple);
+                break;
+            case "AppleMusic":
+                this.setSelectOption(this.destinationSelect, Services.Spotify);
+                break;
+            default:
+                break;
+        }
+        
+    }
+
+    private setSelectOption(selectElement, value) {
+        return [...selectElement.options].some((option, index) => {
+            if (option.value == value) {
+                selectElement.selectedIndex = index;
+                return true;
+            }
+        });
     }
 
     private convert() {

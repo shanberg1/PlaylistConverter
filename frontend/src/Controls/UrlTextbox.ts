@@ -6,16 +6,17 @@ export class UrlTextbox {
     private urlTextbox: HTMLInputElement;
     private service: Service;
     private typingTimer: NodeJS.Timeout;
+    private callBack: (service: Service, media: Media) => void;
     private media: Media;
 
-    constructor() {
+    constructor(setSource: (service: Service, media: Media) => void) {
         this.urlTextbox = getElement("url");
         document.querySelector("#url")?.addEventListener("keyup", () => this.onKeyUp());
-
         this.urlString = "";
         this.service = "None";
         this.media = "None";
-        this.typingTimer = setTimeout(this.doneTyping, 1000);
+        this.typingTimer = setTimeout(() => this.doneTyping(), 1000);
+        this.callBack = setSource;
     }
 
     private getUrl(): string {
@@ -24,6 +25,10 @@ export class UrlTextbox {
 
     private getService(): Service {
         return this.service;
+    }
+
+    private getTextBox() {
+        return this.urlTextbox;
     }
 
     private onKeyUp() {
@@ -39,6 +44,7 @@ export class UrlTextbox {
         this.urlString = this.urlTextbox.value;
         this.service = this.tryDetectService();
         this.media = this.tryDetectMediaType();
+        this.callBack(this.service, this.media);
     }
 
     private tryDetectService(): Service {
