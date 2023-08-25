@@ -17,10 +17,10 @@ export class HomePage {
     private urlTextbox: UrlTextbox;
 
     constructor() {
-        document.querySelector("#convertSongButton")?.addEventListener("click", this.convert);
-        document.querySelector("#urlType")?.addEventListener("change", this.urlTypeSelect);
-        document.querySelector("#sourceService")?.addEventListener("change", this.sourceServiceSelect);
-        document.querySelector("#destinationService")?.addEventListener("change", this.destinationServiceSelect);
+        document.querySelector("#convertSongButton")?.addEventListener("click", () => this.convert());
+        document.querySelector("#urlType")?.addEventListener("change", () => this.urlTypeSelect());
+        document.querySelector("#sourceService")?.addEventListener("change", () => this.sourceServiceSelect());
+        document.querySelector("#destinationService")?.addEventListener("change", () => this.destinationServiceSelect());
         
         this.urlType = getElement("urlType");
         this.sourceSelect = getElement("sourceService");
@@ -122,14 +122,14 @@ export class HomePage {
     }
 
     private convertPlaylist() {
-        const playlisturl = getElement("url").value;
+        const playlisturl = this.urlTextbox.getUrl();
         const destEndpoint = this.destinationSelect.value === Services.Apple ? "applemusic" : "spotify";
         return fetch(`${_backendUrl}/service/${destEndpoint}/playlist`,
             {
                 method: "POST",
                 body: JSON.stringify({
-                    service: this.sourceSelect.value,
-                    id: this.sourceSelect.value === Services.Apple ? getAppleMusicId(playlisturl) : getSpotifyPlaylistId(playlisturl),
+                    service: this.urlTextbox.getService(),
+                    id: this.urlTextbox.getService() === Services.Apple ? getAppleMusicId(playlisturl) : getSpotifyPlaylistId(playlisturl),
                     region: "us" // FIXME
                 }),
                 headers: {

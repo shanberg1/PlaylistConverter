@@ -19,11 +19,11 @@ export class UrlTextbox {
         this.callBack = setSource;
     }
 
-    private getUrl(): string {
+    public getUrl(): string {
         return this.urlString;
     }
 
-    private getService(): Service {
+    public getService(): Service {
         return this.service;
     }
 
