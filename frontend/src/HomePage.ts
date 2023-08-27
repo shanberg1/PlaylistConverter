@@ -170,7 +170,11 @@ function getAppleMusicRegion(url: string): string {
 
 // TODO: actually implement good logic
 function getAppleMusicId(url: string): string {
-    return url.split("/")[6]?.split("?")[0];
+    const parsedUrl = urlLib.parse(url);
+    const path: string = parsedUrl.path;
+    const splitPath = path.split("/");
+    const playlistIndex = splitPath.findIndex((pathVal) => pathVal === "playlist");
+    return splitPath[playlistIndex + 2];
 }
 
 // TODO: actually implement good logic
