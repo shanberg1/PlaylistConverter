@@ -26,6 +26,7 @@ export class HomePage {
         this.sourceSelect = getElement("sourceService");
         this.destinationSelect = getElement("destinationService");
         this.convertButton = getElement("convertSongButton");
+        this.convertButton.disabled = true;
 
         const typePlaylist = document.createElement("option");
         typePlaylist.value = "Playlist";
@@ -35,33 +36,17 @@ export class HomePage {
         typeSong.value = "Song";
         typeSong.text = "Song";
     
-        this.urlType.appendChild(typePlaylist);
-        this.urlType.appendChild(typeSong);
-    
-        // const sourceApple = document.createElement("option");
-        // sourceApple.value = Services.Apple;
-        // sourceApple.text = "Apple";
-    
-        // const sourceSpotify = document.createElement("option");
-        // sourceSpotify.value = Services.Spotify;
-        // sourceSpotify.text = "Spotify";
-        // // sourceSpotify.disabled = true;
-    
         const destinationApple = document.createElement("option");
         destinationApple.value = Services.Apple;
         destinationApple.text = "Apple";
-        // destinationApple.disabled = true;
     
         const destinationSpotify = document.createElement("option");
         destinationSpotify.value = Services.Spotify;
         destinationSpotify.text = "Spotify";
     
-        // this.sourceSelect.appendChild(sourceApple);
-        // this.sourceSelect.appendChild(sourceSpotify);
         this.destinationSelect.appendChild(destinationSpotify);
         this.destinationSelect.appendChild(destinationApple);
 
-        // this.setSource.bind(this);
         this.urlTextbox = new UrlTextbox((service, media) => this.setSource(service, media));
     }
 
@@ -73,11 +58,14 @@ export class HomePage {
         switch(this.sourceService) {
             case "Spotify":
                 this.setSelectOption(this.destinationSelect, Services.Apple);
+                this.convertButton.disabled = false;
                 break;
             case "AppleMusic":
                 this.setSelectOption(this.destinationSelect, Services.Spotify);
+                this.convertButton.disabled = false;
                 break;
             default:
+                this.convertButton.disabled = true;
                 break;
         }
         
@@ -93,13 +81,16 @@ export class HomePage {
     }
 
     private convert() {
-        const urlType = getElement("urlType").value;
+        // const urlType = getElement("urlType").value;
+        let urlType = "Playlist";
         switch (urlType) {
             case "Playlist":
                 this.convertPlaylist();
                 break;
             case "Song":
-                this.convertSong();
+                // Disable song for now
+                console.log("song");
+                // this.convertSong();
                 break;
             default:
                 console.log("incorrect type");

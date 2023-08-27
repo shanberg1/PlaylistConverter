@@ -1,22 +1,41 @@
-.background {
-    background-color: aquamarine;
+.navBar {
+    background-color: #333533;
 }
 
+.navbar-brand {
+    color: #f5cb5c;
+    text-decoration: none;
+    font-size: 30;
+    font-family: Nunito,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+}
+
+.background {
+    background-color: #e8eddf;
+    margin: 0;
+}
+
+/*
 .heading {
     margin: auto;
     text-align: center
 }
+*/
 
 .controls {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 0.5fr auto 1fr auto;
-    grid-gap:5px;
+    grid-gap: 5px;
+    padding-top: 50px;
+    padding-bottom: 10px;
+    background-color: #333533;
 }
 
 .selectControlsContainer {
     grid-row: 3;
-    grid-column: 2
+    grid-column: 2;
+    font-family: Nunito,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+    color: #f5cb5c;
 }
 
 .selectControls {
@@ -26,18 +45,25 @@
     justify-content: center;
 }
 
+/*
 .urlsContainer {
     grid-row: 2;
     grid-column: 2
 }
+*/
 
+/*
 .urlTextboxes {
     display: grid;
     place-items: center;
 }
+*/
 
 .songTextBox {
-    width: 250px;
+    width: 300px;
+    margin: auto;
+    grid-row:1;
+    grid-column:2;
 }
 
 div.selectControls label       { text-align:right; }
@@ -46,14 +72,14 @@ div.selectControls label:after { content: ":"; }
 .playlistTextBox {
     width: 300px;
     margin: auto;
-    grid-row: 1;
+    grid-row: 2;
     grid-column: 2;
 }
 
 .newPlaylistTextBox {
     width: 300px;
     margin: auto;
-    grid-row: 1;
+    grid-row: 2;
     grid-column: 2;
 }
 

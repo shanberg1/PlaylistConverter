@@ -5,27 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheet.css" type="text/css">
     <div>
+        <header>
+            <nav class="navBar">
+                <a class="navbar-brand" href="www.google.com">
+                    <img loading="lazy" src="https://uploads.commoninja.com/searchengine/wordpress/svg-favicon.png" alt="" width="30" height="30">
+    
+                    Playlist Converter
+                </a>
+            </nav>
+        </header>
         <div>
-            <h1 class="heading">Playlist Converter</h1>
+            <!-- h1 class="heading">Playlist Converter</h1 -->
         </div>
         <div class="controls">
             <div class="selectControlsContainer">
                 <div class="selectControls">
-                    <label for="urlType">Url type</label>
-                    <select name="Url type" class="urlType" id="urlType"></select>
-                    <!-- label for="sourceService">Source service</label -->
-                    <!-- select name="Source Service" class="serviceSelect" id="sourceService"></select -->
+                    <!-- label for="urlType">Url type</label -->
+                    <!-- select name="Url type" class="urlType" id="urlType"></select -->
                     <label for="destinationService">Destination service</label>
                     <select name="Destination Service" class="serviceSelect" id="destinationService"></select>
                 </div>
             </div>
-            <button id=convertSongButton class="convertButton" type="button">Convert song!</button>
-            <div class="urlsContainer">
-                <div class="urlTextboxes">
-                    <input id="url" class="songTextBox" type="text" placeholder="Enter a song or playlist url"></input>
-                    <input id="newSongUrl" class="newPlaylistTextBox" type="text" placeholder="Your new song url will be here" readonly></input>
-                </div>
-            </div>
+            <button id=convertSongButton class="convertButton" type="button">Convert!</button>
+            <input id="url" class="songTextBox" type="text" placeholder="Enter a playlist url"></input>
+            <input id="newSongUrl" class="newPlaylistTextBox" type="text" placeholder="Your new url will be here" readonly></input>
         </div>
     </div>
     <script type="module" src="bundle.js"></script>
