@@ -1,3 +1,4 @@
+import * as urlLib from "url";
 import { _backendUrl } from "./Constants";
 import {
     Services
@@ -174,5 +175,9 @@ function getAppleMusicId(url: string): string {
 
 // TODO: actually implement good logic
 function getSpotifyPlaylistId(url: string): string {
-    return url.split("/")[4];
+    const parsedUrl = urlLib.parse(url);
+    const path: string = parsedUrl.path;
+    const splitPath = path.split("/");
+    const playlistIndex = splitPath.findIndex((pathVal) => pathVal === "playlist");
+    return splitPath[playlistIndex + 1];
 }
