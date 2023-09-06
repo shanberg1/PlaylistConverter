@@ -168,16 +168,14 @@ function getAppleMusicRegion(url: string): string {
     return url.split("/")[3];
 }
 
-// TODO: actually implement good logic
 function getAppleMusicId(url: string): string {
     const parsedUrl = urlLib.parse(url);
     const path: string = parsedUrl.path;
     const splitPath = path.split("/");
     const playlistIndex = splitPath.findIndex((pathVal) => pathVal === "playlist");
-    return splitPath[playlistIndex + 2];
+    return splitPath[playlistIndex + 1];
 }
 
-// TODO: actually implement good logic
 function getSpotifyPlaylistId(url: string): string {
     const parsedUrl = urlLib.parse(url);
     const path: string = parsedUrl.path;
