@@ -158,7 +158,8 @@ export class HomePage {
                 return res.json();
             }).then((data) => {
                 const newPlaylist = getElement("newSongUrl");
-                newPlaylist.value = data.url;
+                const responseText = data.url ?? "An error has occurred"
+                newPlaylist.value = responseText;
                 return data;
             })
     }
