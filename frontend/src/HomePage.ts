@@ -14,6 +14,7 @@ export class HomePage {
     private destinationSelect: HTMLInputElement;
     private convertButton: HTMLInputElement;
     private sourceService: Service;
+    private loader: HTMLInputElement;
     private media: Media;
     private urlTextbox: UrlTextbox;
 
@@ -27,6 +28,7 @@ export class HomePage {
         this.sourceSelect = getElement("sourceService");
         this.destinationSelect = getElement("destinationService");
         this.convertButton = getElement("convertSongButton");
+        this.loader = getElement("loader");
         this.convertButton.disabled = true;
 
         const typePlaylist = document.createElement("option");
@@ -116,6 +118,7 @@ export class HomePage {
     private convertPlaylist() {
         const playlisturl = this.urlTextbox.getUrl();
         const destEndpoint = this.destinationSelect.value === Services.Apple ? "applemusic" : "spotify";
+        this.loader.style.display = "block";
         return fetch(`${_backendUrl}/service/${destEndpoint}/playlist`,
             {
                 method: "POST",
@@ -134,6 +137,8 @@ export class HomePage {
                 const newPlaylist = getElement("newSongUrl");
                 newPlaylist.value = data.url;
                 return data;
+            }).finally(() => {
+                this.loader.style.display = "none";
             })
     }
 
