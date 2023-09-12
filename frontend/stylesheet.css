@@ -1,22 +1,54 @@
-.background {
-    background-color: aquamarine;
+.navBar {
+    background-color: #333533;
 }
 
+.navbar-brand {
+    color: #f5cb5c;
+    text-decoration: none;
+    font-size: 30;
+    font-family: Nunito,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+}
+
+.background {
+    background-color: #e8eddf;
+    margin: 0;
+}
+
+/*
 .heading {
     margin: auto;
     text-align: center
 }
+*/
 
+/*
 .controls {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 3fr auto 1fr auto;
-    grid-gap:5px;
+    grid-template-rows: 0.5fr auto 1fr auto;
+    grid-gap: 5px;
+    padding-top: 50px;
+    padding-bottom: 10px;
+    background-color: #333533;
+}
+*/
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.5fr auto 1fr auto;
+    place-items: center;
+    grid-gap: 5px;
+    padding-top: 50px;
+    padding-bottom: 10px;
+    background-color: #333533;
 }
 
 .selectControlsContainer {
     grid-row: 3;
-    grid-column: 2
+    grid-column: 1;
+    font-family: Nunito,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+    color: #f5cb5c;
 }
 
 .selectControls {
@@ -26,45 +58,147 @@
     justify-content: center;
 }
 
+/*
 .urlsContainer {
     grid-row: 2;
     grid-column: 2
 }
+*/
 
+/*
 .urlTextboxes {
     display: grid;
-    grid-template-columns: 50% 50%;
-    grid-gap:5px;
-    justify-content: center;
+    place-items: center;
 }
+*/
 
 .songTextBox {
-
+    width: 300px;
+    margin: auto;
+    grid-row:1;
+    grid-column:1;
 }
 
 div.selectControls label       { text-align:right; }
 div.selectControls label:after { content: ":"; }
 
 .playlistTextBox {
-    width: 300px;
+    width: 50%;
     margin: auto;
     grid-row: 2;
-    grid-column: 2;
+    grid-column: 1;
 }
 
 .newPlaylistTextBox {
-    width: 300px;
+    width: 50%;
     margin: auto;
     grid-row: 5;
-    grid-column: 2;
+    grid-column: 1;
 }
 
 .convertButton {
     width: 100px;
     margin: auto;
     grid-row:4;
-    grid-column: 2;
+    grid-column: 1;
 }
+
+/*
+reference
+.inputUrlTextBox input {
+    width: 50%;
+    display: block;
+    outline: none;
+    border: 0;
+    padding: 1rem;
+    border-radius: 20px;
+    margin: 0.8rem 0;
+    color: rgb(1, 32, 32);
+    justify-content: center;
+}
+ 
+.inputUrlTextBox input::placeholder{
+    color: rgb(1, 32, 32);
+}
+ 
+.inputUrlTextBox input:active {
+    outline: 2px solid rgb(89, 250, 156);
+}
+
+*/
+
+.inputUrlTextBox {
+    grid-column: 1;
+    grid-row: 2;
+    display: grid;
+    justify-items: center;
+    width: 150%;
+}
+
+.inputUrlTextBox input {
+    width: 50%;
+    outline: none;
+    border: 0;
+    padding: 1rem;
+    border-radius: 20px;
+    margin: 0.8rem 0;
+    color: rgb(1, 32, 32);
+    /*
+    justify-content: center;
+    */
+}
+ 
+.inputUrlTextBox input::placeholder{
+    color: rgb(1, 32, 32);
+}
+ 
+.inputUrlTextBox input:active {
+    outline: 2px solid rgb(89, 250, 156);
+}
+
+.resultUrlTextBox {
+    grid-column: 1;
+    grid-row: 6;
+    display: grid;
+    justify-items: center;
+    width: 150%;
+}
+
+.resultUrlTextBox input {
+    width: 50%;
+    outline: none;
+    grid-row: 2;
+    border: 0;
+    padding: 1rem;
+    border-radius: 20px;
+    margin: 0.8rem 0;
+    color: rgb(1, 32, 32);
+    justify-content: center;
+}
+ 
+.resultUrlTextBox input::placeholder{
+    color: rgb(1, 32, 32);
+}
+ 
+.resultUrlTextBox input:active {
+    outline: 2px solid rgb(89, 250, 156);
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    animation: spin 1s linear infinite;
+    display: none;
+    grid-row: 1;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
 .serviceSelect {
     width: 100px;
