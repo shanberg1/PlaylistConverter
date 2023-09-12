@@ -56,7 +56,11 @@ function getAppleMusicPlaylists(connection: any, callback: (id: string) => any) 
         console.log('debug:', message);
     });
 
-    connection.on('connect', function(err) {  
+    connection.on('connect', function(err) {
+        if (err) {
+            console.log(err);
+            throw err;
+        }
         // If no error, then good to proceed.
         console.log("Connected");  
         connection.execSql(request);

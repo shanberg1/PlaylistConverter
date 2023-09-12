@@ -7,7 +7,7 @@
     <div>
         <header>
             <nav class="navBar">
-                <a class="navbar-brand" href="www.google.com">
+                <a class="navbar-brand">
                     <img loading="lazy" src="https://uploads.commoninja.com/searchengine/wordpress/svg-favicon.png" alt="" width="30" height="30">
     
                     Playlist Converter
@@ -27,8 +27,14 @@
                 </div>
             </div>
             <button id=convertSongButton class="convertButton" type="button">Convert!</button>
-            <input id="url" class="songTextBox" type="text" placeholder="Enter a playlist url"></input>
-            <input id="newSongUrl" class="newPlaylistTextBox" type="text" placeholder="Your new url will be here" readonly></input>
+            <div class="inputUrlTextBox">
+                <input id="url" type="text" placeholder="Enter a playlist url"></input>
+            </div>
+            <div class="resultUrlTextBox">
+                <div class="loader" id="loader"></div>
+                <input id="newSongUrl" type="text" placeholder="Your new url will be here" readonly></input>
+            </div>
+            <!-- div class="loader"></div -->
         </div>
     </div>
     <script type="module" src="bundle.js"></script>

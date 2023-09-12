@@ -1,3 +1,4 @@
+import * as urlLib from "url";
 import { _backendUrl } from "./Constants";
 import {
     Services
@@ -13,6 +14,7 @@ export class HomePage {
     private destinationSelect: HTMLInputElement;
     private convertButton: HTMLInputElement;
     private sourceService: Service;
+    private loader: HTMLInputElement;
     private media: Media;
     private urlTextbox: UrlTextbox;
 
@@ -26,6 +28,7 @@ export class HomePage {
         this.sourceSelect = getElement("sourceService");
         this.destinationSelect = getElement("destinationService");
         this.convertButton = getElement("convertSongButton");
+        this.loader = getElement("loader");
         this.convertButton.disabled = true;
 
         const typePlaylist = document.createElement("option");
@@ -115,6 +118,7 @@ export class HomePage {
     private convertPlaylist() {
         const playlisturl = this.urlTextbox.getUrl();
         const destEndpoint = this.destinationSelect.value === Services.Apple ? "applemusic" : "spotify";
+        this.loader.style.display = "block";
         return fetch(`${_backendUrl}/service/${destEndpoint}/playlist`,
             {
                 method: "POST",
@@ -133,6 +137,8 @@ export class HomePage {
                 const newPlaylist = getElement("newSongUrl");
                 newPlaylist.value = data.url;
                 return data;
+            }).finally(() => {
+                this.loader.style.display = "none";
             })
     }
 
@@ -167,12 +173,18 @@ function getAppleMusicRegion(url: string): string {
     return url.split("/")[3];
 }
 
-// TODO: actually implement good logic
 function getAppleMusicId(url: string): string {
-    return url.split("/")[6]?.split("?")[0];
+    const parsedUrl = urlLib.parse(url);
+    const path: string = parsedUrl.path;
+    const splitPath = path.split("/");
+    const playlistIndex = splitPath.findIndex((pathVal) => pathVal === "playlist");
+    return splitPath[playlistIndex + 1];
 }
 
-// TODO: actually implement good logic
 function getSpotifyPlaylistId(url: string): string {
-    return url.split("/")[4];
+    const parsedUrl = urlLib.parse(url);
+    const path: string = parsedUrl.path;
+    const splitPath = path.split("/");
+    const playlistIndex = splitPath.findIndex((pathVal) => pathVal === "playlist");
+    return splitPath[playlistIndex + 1];
 }
