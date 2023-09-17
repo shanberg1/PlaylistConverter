@@ -1,5 +1,5 @@
 import * as urlLib from "url";
-import { _backendUrl } from "./Constants";
+import { InstructionText, _backendUrl } from "./Constants";
 import {
     Services
 } from "../../server/src/Models/RequestModel"
@@ -17,6 +17,7 @@ export class HomePage {
     private loader: HTMLInputElement;
     private media: Media;
     private urlTextbox: UrlTextbox;
+    private descriptionText: HTMLInputElement;
 
     constructor() {
         document.querySelector("#convertSongButton")?.addEventListener("click", () => this.convert());
@@ -30,6 +31,8 @@ export class HomePage {
         this.convertButton = getElement("convertSongButton");
         this.loader = getElement("loader");
         this.convertButton.disabled = true;
+        this.descriptionText = getElement("descriptionText");
+        this.descriptionText.textContent = InstructionText;
 
         const typePlaylist = document.createElement("option");
         typePlaylist.value = "Playlist";
