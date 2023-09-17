@@ -12,12 +12,11 @@ import { PlaylistInfo } from "../Models/RequestModel";
 var stringSimilarity = require("string-similarity");
 
 export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentifier[]): Promise<string[]> {
-    var appleMusicTrackIds = new Array();
-    for (const trackIdentifier of tracks) {
+    const trackRequests = tracks.map(trackIdentifier => {
         // Spotify tends to put a dash after the normal song title, with something like "In My Room - Remastered 2014". Taking everything before the dash to improve accuracy.
         // ^ this helped a lot. I may need to refactor later when i add more services.
         const searchTerm = trackIdentifier.name.split('-')[0].concat(' ').concat(trackIdentifier.artist).replace(' ', '+');
-        await request
+        return request
             .get(`https://api.music.apple.com/v1/catalog/${region}/search?term=${searchTerm}&types=songs`)
             .set("Authorization", "Bearer " + _appleMusicSJWT)
             .then(value => {
@@ -39,12 +38,50 @@ export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentif
                 })
 
                 const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
-                appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
+                // appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
+                return songResults.data[indexOfMaxArray].id;
             })
             .catch(err => {
                 console.log(err);
+                return "";
             });
-    }
+    });
+
+    const appleMusicTrackIds = (await Promise.all(trackRequests)).filter((trackId) => !trackId);
+
+    // for (const trackIdentifier of tracks) {
+    //     // Spotify tends to put a dash after the normal song title, with something like "In My Room - Remastered 2014". Taking everything before the dash to improve accuracy.
+    //     // ^ this helped a lot. I may need to refactor later when i add more services.
+    //     const searchTerm = trackIdentifier.name.split('-')[0].concat(' ').concat(trackIdentifier.artist).replace(' ', '+');
+    //     await request
+    //         .get(`https://api.music.apple.com/v1/catalog/${region}/search?term=${searchTerm}&types=songs`)
+    //         .set("Authorization", "Bearer " + _appleMusicSJWT)
+    //         .then(value => {
+    //             return value.body;
+    //         })
+    //         .then((data: any /* TODO: find apple music ts version */) => {
+    //             if (!data) {
+    //                 console.log(`Nothing found for track ${trackIdentifier.name}`);
+    //                 return;
+    //             }
+                
+    //             const songResults = <AppleMusicApi.Relationship<AppleMusicApi.Song>> data.results.songs;
+    //             const songSimilarityArray = new Array<number>(songResults.data.length);
+    //             songResults.data.forEach((song, index) => {
+    //                 const titleSimilarity = stringSimilarity.compareTwoStrings(song.attributes.name, trackIdentifier.name);
+    //                 const albumSimilarity = stringSimilarity.compareTwoStrings(song.attributes.albumName, trackIdentifier.album);
+    //                 const artistSimilarity = stringSimilarity.compareTwoStrings(song.attributes.artistName, trackIdentifier.artist);
+    //                 songSimilarityArray[index] = titleSimilarity + albumSimilarity + artistSimilarity;
+    //             })
+
+    //             const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
+    //             appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         });
+    // }
+    
     return appleMusicTrackIds;
 }
 
