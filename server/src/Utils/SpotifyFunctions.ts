@@ -31,10 +31,9 @@ export async function getTrackIdFromSptofyId(id: string): Promise<TrackIdentifie
 }
 
 export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<string[]> {
-    console.log("Attempting to retrieve spotify track ids")
-    var spotifyTrackIds = new Array();
-    for (const trackIdentifier of tracks) {
-        const data: SpotifyApi.SearchResponse = await request
+    console.log("Attempting to retrieve spotify track ids");
+    const retriveSpotifyTrackIdPromises = tracks.map((trackIdentifier) => {
+        const data: Promise<string> = request
             .get("https://api.spotify.com/v1/search")
             .set("Authorization", "Bearer " + _spotifyClientCert)
             .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -43,26 +42,28 @@ export async function getSpotifyTrackIds(tracks: TrackIdentifier[]): Promise<str
             .then((value) => {
                 console.log("successfully retrieved spotify track id")
                 return value.body as SpotifyApi.SearchResponse;
+            }).then((searchResponseData) => {
+                // TODO: add logic for more thorough checking of null values and error handling
+                const trackResults = searchResponseData.tracks.items;
+                const songSimilarityArray = new Array<number>(trackResults.length);
+                trackResults.forEach((track, index) => {
+                    const titleSimilarity = stringSimilarity.compareTwoStrings(track.name, trackIdentifier.name);
+                    const albumSimilarity = stringSimilarity.compareTwoStrings(track.album.name, trackIdentifier.album);
+                    // Have to go through all of the other artists
+                    const artistSimilarity = stringSimilarity.compareTwoStrings(track.artists[0].name, trackIdentifier.artist);
+                    songSimilarityArray[index] = titleSimilarity + albumSimilarity + artistSimilarity;
+                })
+                const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
+                return trackResults[indexOfMaxArray]?.id && `spotify:track:${trackResults[indexOfMaxArray].id}`;
             })
             .catch(err => {
                 console.log(err);
                 return null;
             })
-        // TODO: add logic for more thorough checking of null values and error handling
-        const trackResults = data.tracks.items;
-        const songSimilarityArray = new Array<number>(trackResults.length);
-        trackResults.forEach((track, index) => {
-            const titleSimilarity = stringSimilarity.compareTwoStrings(track.name, trackIdentifier.name);
-            const albumSimilarity = stringSimilarity.compareTwoStrings(track.album.name, trackIdentifier.album);
-            // Have to go through all of the other artists
-            const artistSimilarity = stringSimilarity.compareTwoStrings(track.artists[0].name, trackIdentifier.artist);
-            songSimilarityArray[index] = titleSimilarity + albumSimilarity + artistSimilarity;
-        })
+        return data;
+    });
 
-        const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
-        trackResults[indexOfMaxArray]?.id && spotifyTrackIds.push(`spotify:track:${trackResults[indexOfMaxArray].id}`);
-    }
-    console.log("finishing getting spotify track id")
+    const spotifyTrackIds = (await Promise.all(retriveSpotifyTrackIdPromises));
     return spotifyTrackIds;
 }
 
