@@ -18,6 +18,7 @@ export class HomePage {
     private media: Media;
     private urlTextbox: UrlTextbox;
     private descriptionText: HTMLInputElement;
+    private newPlaylist: HTMLInputElement;
 
     constructor() {
         document.querySelector("#convertSongButton")?.addEventListener("click", () => this.convert());
@@ -32,6 +33,7 @@ export class HomePage {
         this.loader = getElement("loader");
         this.convertButton.disabled = true;
         this.descriptionText = getElement("descriptionText");
+        this.newPlaylist = getElement("newSongUrl");
         this.descriptionText.textContent = InstructionText;
 
         const typePlaylist = document.createElement("option");
@@ -122,13 +124,16 @@ export class HomePage {
         const playlisturl = this.urlTextbox.getUrl();
         const destEndpoint = this.destinationSelect.value === Services.Apple ? "applemusic" : "spotify";
         this.loader.style.display = "block";
+        this.convertButton.disabled = true;
+        this.newPlaylist.value = "";
+
         return fetch(`${_backendUrl}/service/${destEndpoint}/playlist`,
             {
                 method: "POST",
                 body: JSON.stringify({
                     service: this.urlTextbox.getService(),
                     id: this.urlTextbox.getService() === Services.Apple ? getAppleMusicId(playlisturl) : getSpotifyPlaylistId(playlisturl),
-                    region: "us" // FIXME
+                    region: "us" // FIXME: localize
                 }),
                 headers: {
                     "Content-Type": "application/json"
@@ -137,11 +142,11 @@ export class HomePage {
             .then(res => {
                 return res.json();
             }).then((data) => {
-                const newPlaylist = getElement("newSongUrl");
-                newPlaylist.value = data.url;
+                this.newPlaylist.value = data.url;
                 return data;
             }).finally(() => {
                 this.loader.style.display = "none";
+                this.convertButton.disabled = false;
             })
     }
 
@@ -181,7 +186,7 @@ function getAppleMusicId(url: string): string {
     const path: string = parsedUrl.path;
     const splitPath = path.split("/");
     const playlistIndex = splitPath.findIndex((pathVal) => pathVal === "playlist");
-    return splitPath[playlistIndex + 1];
+    return splitPath[playlistIndex + 2];
 }
 
 function getSpotifyPlaylistId(url: string): string {
