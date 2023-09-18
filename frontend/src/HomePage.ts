@@ -1,5 +1,5 @@
 import * as urlLib from "url";
-import { InstructionText, _backendUrl } from "./Constants";
+import { AppleMusicLibraryPlaylistValidationText, InstructionText, URLExceptions, _backendUrl } from "./Constants";
 import {
     Services
 } from "../../server/src/Models/RequestModel"
@@ -34,6 +34,7 @@ export class HomePage {
         this.convertButton.disabled = true;
         this.descriptionText = getElement("descriptionText");
         this.newPlaylist = getElement("newSongUrl");
+        
         this.descriptionText.textContent = InstructionText;
 
         const typePlaylist = document.createElement("option");
@@ -126,13 +127,13 @@ export class HomePage {
         this.loader.style.display = "block";
         this.convertButton.disabled = true;
         this.newPlaylist.value = "";
-
+        const id = this.urlTextbox.getService() === Services.Apple ? getAppleMusicId(playlisturl) : getSpotifyPlaylistId(playlisturl);
         return fetch(`${_backendUrl}/service/${destEndpoint}/playlist`,
             {
                 method: "POST",
                 body: JSON.stringify({
                     service: this.urlTextbox.getService(),
-                    id: this.urlTextbox.getService() === Services.Apple ? getAppleMusicId(playlisturl) : getSpotifyPlaylistId(playlisturl),
+                    id: id,
                     region: "us" // FIXME: localize
                 }),
                 headers: {
@@ -185,8 +186,17 @@ function getAppleMusicId(url: string): string {
     const parsedUrl = urlLib.parse(url);
     const path: string = parsedUrl.path;
     const splitPath = path.split("/");
-    const playlistIndex = splitPath.findIndex((pathVal) => pathVal === "playlist");
-    return splitPath[playlistIndex + 2];
+    return splitPath[splitPath.length - 1];
+}
+
+function validateAppleMusicURL(url: string): boolean {
+    const parsedUrl = urlLib.parse(url);
+    const path: string = parsedUrl.path;
+    const splitPath = path.split("/");
+    if (splitPath.find((pathElement) => pathElement.toLowerCase() === "library")) {
+        throw URLExceptions.APPLE_MUSIC_LIBRARY_PLAYLIST;
+    }
+    return true;
 }
 
 function getSpotifyPlaylistId(url: string): string {
