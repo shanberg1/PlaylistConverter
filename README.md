@@ -12,6 +12,6 @@ Currently the project exists as a proof of concept.
 
 To be more functional, the following improvements need to be made:
 - Improve accuracy by improving the heuritics used to calculate song similarity.
-- Improve usability by creating a more responsive UI including adding instructions, loading indicators, smart URL detection, and error handling.
+- Improve usability by adding more detailed error handling.
 - Improve performance by implementing a cache for song pairs.
 - Scale up the number of Apple Music playlists that can be used to serve users.
