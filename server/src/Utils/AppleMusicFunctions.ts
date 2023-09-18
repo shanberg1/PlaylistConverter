@@ -9,79 +9,54 @@ import {
 } from "../app"
 import { TrackIdentifier } from "../Models/TrackId";
 import { PlaylistInfo } from "../Models/RequestModel";
+import { batchTrackArrays, wait } from "./Utility";
 var stringSimilarity = require("string-similarity");
 
 export async function getAppleMusicTrackIds(region: string, tracks: TrackIdentifier[]): Promise<string[]> {
-    const trackRequests = tracks.map(trackIdentifier => {
-        // Spotify tends to put a dash after the normal song title, with something like "In My Room - Remastered 2014". Taking everything before the dash to improve accuracy.
-        // ^ this helped a lot. I may need to refactor later when i add more services.
-        const searchTerm = trackIdentifier.name.split('-')[0].concat(' ').concat(trackIdentifier.artist).replace(' ', '+');
-        return request
-            .get(`https://api.music.apple.com/v1/catalog/${region}/search?term=${searchTerm}&types=songs`)
-            .set("Authorization", "Bearer " + _appleMusicSJWT)
-            .then(value => {
-                return value.body;
-            })
-            .then((data: any /* TODO: find apple music ts version */) => {
-                if (!data) {
-                    console.log(`Nothing found for track ${trackIdentifier.name}`);
-                    return;
-                }
-                
-                const songResults = <AppleMusicApi.Relationship<AppleMusicApi.Song>> data.results.songs;
-                const songSimilarityArray = new Array<number>(songResults.data.length);
-                songResults.data.forEach((song, index) => {
-                    const titleSimilarity = stringSimilarity.compareTwoStrings(song.attributes.name, trackIdentifier.name);
-                    const albumSimilarity = stringSimilarity.compareTwoStrings(song.attributes.albumName, trackIdentifier.album);
-                    const artistSimilarity = stringSimilarity.compareTwoStrings(song.attributes.artistName, trackIdentifier.artist);
-                    songSimilarityArray[index] = titleSimilarity + albumSimilarity + artistSimilarity;
+    const appleMusicTrackIds: string[] = [];
+
+    const trackBatches = batchTrackArrays(tracks, 30);
+    for (var i = 0; i < trackBatches.length; i++) {
+        const trackBatch = trackBatches[i];
+        const batchRequests = trackBatch.map(async trackIdentifier => {
+            // Spotify tends to put a dash after the normal song title, with something like "In My Room - Remastered 2014". Taking everything before the dash to improve accuracy.
+            // ^ this helped a lot. I may need to refactor later when i add more services.
+            const searchTerm = trackIdentifier.name.split('-')[0].concat(' ').concat(trackIdentifier.artist).replace(' ', '+');
+            return request
+                .get(`https://api.music.apple.com/v1/catalog/${region}/search?term=${searchTerm}&types=songs`)
+                .set("Authorization", "Bearer " + _appleMusicSJWT)
+                .then(value => {
+                    return value.body;
                 })
-
-                const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
-                // appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
-                return songResults.data[indexOfMaxArray].id;
-            })
-            .catch(err => {
-                console.log(err);
-                return "";
-            });
-    });
-
-    const appleMusicTrackIds = (await Promise.all(trackRequests)).filter((trackId) => !trackId);
-
-    // for (const trackIdentifier of tracks) {
-    //     // Spotify tends to put a dash after the normal song title, with something like "In My Room - Remastered 2014". Taking everything before the dash to improve accuracy.
-    //     // ^ this helped a lot. I may need to refactor later when i add more services.
-    //     const searchTerm = trackIdentifier.name.split('-')[0].concat(' ').concat(trackIdentifier.artist).replace(' ', '+');
-    //     await request
-    //         .get(`https://api.music.apple.com/v1/catalog/${region}/search?term=${searchTerm}&types=songs`)
-    //         .set("Authorization", "Bearer " + _appleMusicSJWT)
-    //         .then(value => {
-    //             return value.body;
-    //         })
-    //         .then((data: any /* TODO: find apple music ts version */) => {
-    //             if (!data) {
-    //                 console.log(`Nothing found for track ${trackIdentifier.name}`);
-    //                 return;
-    //             }
-                
-    //             const songResults = <AppleMusicApi.Relationship<AppleMusicApi.Song>> data.results.songs;
-    //             const songSimilarityArray = new Array<number>(songResults.data.length);
-    //             songResults.data.forEach((song, index) => {
-    //                 const titleSimilarity = stringSimilarity.compareTwoStrings(song.attributes.name, trackIdentifier.name);
-    //                 const albumSimilarity = stringSimilarity.compareTwoStrings(song.attributes.albumName, trackIdentifier.album);
-    //                 const artistSimilarity = stringSimilarity.compareTwoStrings(song.attributes.artistName, trackIdentifier.artist);
-    //                 songSimilarityArray[index] = titleSimilarity + albumSimilarity + artistSimilarity;
-    //             })
-
-    //             const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
-    //             appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //         });
-    // }
+                .then((data: any /* TODO: find apple music ts version */) => {
+                    if (!data) {
+                        console.log(`Nothing found for track ${trackIdentifier.name}`);
+                        return;
+                    }
+                    
+                    const songResults = <AppleMusicApi.Relationship<AppleMusicApi.Song>> data.results.songs;
+                    const songSimilarityArray = new Array<number>(songResults.data.length);
+                    songResults.data.forEach((song, index) => {
+                        const titleSimilarity = stringSimilarity.compareTwoStrings(song.attributes.name, trackIdentifier.name);
+                        const albumSimilarity = stringSimilarity.compareTwoStrings(song.attributes.albumName, trackIdentifier.album);
+                        const artistSimilarity = stringSimilarity.compareTwoStrings(song.attributes.artistName, trackIdentifier.artist);
+                        songSimilarityArray[index] = titleSimilarity + albumSimilarity + artistSimilarity;
+                    });
     
+                    const indexOfMaxArray = songSimilarityArray.reduce((previousMaxIndex, currentSimilarityValue, currentIndex, array) => currentSimilarityValue > array[previousMaxIndex] ? currentIndex : previousMaxIndex, 0);
+                    // appleMusicTrackIds.push(songResults.data[indexOfMaxArray].id);
+                    return songResults.data[indexOfMaxArray].id;
+                })
+                .catch(err => {
+                    console.log(err);
+                    return "";
+                });
+        });
+
+        const trackIdBatchResults = (await Promise.all(batchRequests)).filter((trackId) => !!trackId);
+        appleMusicTrackIds.push(...trackIdBatchResults);
+    }
+
     return appleMusicTrackIds;
 }
 
@@ -139,6 +114,21 @@ export function getAllLibraryPlaylists(): Promise<AppleMusicApi.Playlist[]> {
 }
 
 export async function deleteSongsFromAppleMusicLibrary(tracks: string[]): Promise<void> {
+    // const deleteTrackRequests = tracks.map((track) => {
+        //     return request
+        //         .delete(`https://amp-api.music.apple.com/v1/me/library/songs/${track}`)
+        //         .set("Authorization", "Bearer " + _appleDeveloperToken)
+        //         .set("Music-User-Token", _appleMusicSecretToken)
+        //         .set("origin", "https://music.apple.com")
+        //         .set("referrer", "https://music.apple.com/")
+        //         .then(value => {
+        //             return;
+        //         })
+        //         .catch(err => {
+        //             console.log(err);
+        //         });
+        //     });
+        // await Promise.all(deleteTrackRequests);
     tracks.forEach(async (track) => {
         await request
             .delete(`https://amp-api.music.apple.com/v1/me/library/songs/${track}`)
@@ -153,7 +143,6 @@ export async function deleteSongsFromAppleMusicLibrary(tracks: string[]): Promis
                 console.log(err);
             });
         });
-        
 }
 
 export function addTracksToAppleMusicPlaylist(region: string, tracks: string[], playlistId: string): Promise<string> {
