@@ -56,9 +56,6 @@ export const postApplePlaylist = async (req, res) => {
                     });
                 const appleMusicTrackIds = await getAppleMusicTrackIds(region, trackIds);
                 const appleMusicPlaylist = await getOldestAppleMusicPlaylist();
-                // const newPlaylist = await getAppleMusicPlaylist(region, appleMusicPlaylist.id)
-                // const newp = `https://music.apple.com/us/playlist/${appleMusicPlaylist.attributes.name}/${appleMusicPlaylist.id}`
-                // const playlists = await getAllLibraryPlaylists();
                 const playlist = await getLibraryAppleMusicPlaylistById(appleMusicPlaylist);
                 // delete all old songs on the playlist
                 deleteSongsFromAppleMusicLibrary(playlist.relationships.tracks.data.map(track => track.id));

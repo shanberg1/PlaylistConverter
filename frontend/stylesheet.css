@@ -1,14 +1,18 @@
 .navBar {
     background-color: #333533;
-}
-
-.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.50rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .navbar-brand {
     color: #f5cb5c;
     text-decoration: none;
     font-size: 30;
-    font-family: Nunito,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
-}
-
+    font-family: Nunito, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  }
+  
 .background {
     background-color: #e8eddf;
     margin: 0;
@@ -20,7 +24,6 @@
     grid-template-rows: 0.5fr auto 1fr auto;
     place-items: center;
     grid-gap: 5px;
-    padding-top: 50px;
     padding-bottom: 10px;
     background-color: #333533;
 }
