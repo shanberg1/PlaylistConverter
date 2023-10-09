@@ -17,7 +17,8 @@ export class UrlTextbox {
         this.urlTextbox = getElement("url");
         this.urlValidationMessage = getElement("urlSublabel");
         this.urlValidationMessage.textContent = "";
-        document.querySelector("#url")?.addEventListener("keyup", () => this.onKeyUp());
+        document.querySelector("#url")?.addEventListener("keyup", () => this.onChange());
+        document.querySelector("#url")?.addEventListener("paste", () => this.onChange());
         this.urlString = "";
         this.service = "None";
         this.media = "None";
@@ -37,8 +38,8 @@ export class UrlTextbox {
         return this.urlTextbox;
     }
 
-    private onKeyUp() {
-        console.log("keyup");
+    private onChange() {
+        console.log("change");
         clearTimeout(this.typingTimer);
         this.typingTimer = setTimeout(() => this.doneTyping(), 1000);
     }
